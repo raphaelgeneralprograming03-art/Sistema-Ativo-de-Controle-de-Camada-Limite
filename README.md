@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centro de Comando Unificado: PINN Neural & Defesa Tática (SMTA & CAMPIS)</title>
+    <title>Simulador: Controle MHD de Camada Limite Hipersônica</title>
     <style>
         :root {
             --bg-color: #020617;
-            --panel-bg: rgba(8, 18, 35, 0.92);
+            --panel-bg: rgba(10, 22, 40, 0.92);
             --border-color: #00f0ff;
             --accent-green: #00ff66;
             --accent-red: #ff3333;
@@ -35,14 +35,14 @@
         header {
             background: linear-gradient(90deg, #021226, #0a2540, #021226);
             border-bottom: 2px solid var(--border-color);
-            padding: 8px 20px;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         header h1 {
-            font-size: 1rem;
+            font-size: 1.05rem;
             color: var(--border-color);
             letter-spacing: 2px;
         }
@@ -72,45 +72,45 @@
         .main-container {
             display: flex;
             flex: 1;
-            gap: 10px;
-            padding: 10px;
+            gap: 12px;
+            padding: 12px;
             overflow: hidden;
         }
 
-        /* Painel de Controle Esquerdo (Abas / Seções) */
+        /* Painel de Controle Esquerdo */
         .control-panel {
             width: 330px;
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             overflow-y: auto;
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
         }
 
         .panel-section h3 {
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             color: var(--border-color);
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             border-bottom: 1px solid rgba(0, 240, 255, 0.3);
-            padding-bottom: 2px;
+            padding-bottom: 3px;
             letter-spacing: 1px;
         }
 
         .btn-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
         }
 
         button {
             background: rgba(0, 240, 255, 0.1);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 7px 10px;
+            padding: 8px 10px;
             text-align: left;
             font-size: 0.72rem;
             cursor: pointer;
@@ -124,31 +124,40 @@
             box-shadow: 0 0 8px var(--border-color);
         }
 
+        button.action-active {
+            border-color: var(--accent-green);
+            background: rgba(0, 255, 102, 0.2);
+            color: #99ffbb;
+            font-weight: bold;
+        }
+
         button.action-danger {
             border-color: var(--accent-red);
             background: rgba(255, 51, 51, 0.15);
             color: #ff9999;
         }
-        button.action-danger:hover {
-            background: rgba(255, 51, 51, 0.35);
-        }
 
-        button.action-pinn {
-            border-color: var(--accent-green);
-            background: rgba(0, 255, 102, 0.15);
-            color: #99ffbb;
-        }
-        button.action-pinn:hover {
-            background: rgba(0, 255, 102, 0.35);
-        }
-
-        /* Área Central (Canvas + Logs PINN) */
+        /* Centro: Visão Geral + Canvas */
         .center-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             overflow: hidden;
+        }
+
+        .app-overview {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-size: 0.72rem;
+            line-height: 1.4;
+            color: #cbd5e1;
+        }
+
+        .app-overview strong {
+            color: var(--accent-cyan);
         }
 
         .viewport-container {
@@ -178,42 +187,16 @@
             height: 100%;
         }
 
-        /* Painel de Log da PINN & Sistema */
-        .log-panel {
-            flex: 0.8;
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            font-size: 0.68rem;
-            overflow-y: auto;
-        }
-
-        .log-title {
-            color: var(--accent-green);
-            font-weight: bold;
-            border-bottom: 1px solid rgba(0, 255, 102, 0.3);
-            padding-bottom: 2px;
-        }
-
-        .log-content {
-            color: #a5d8ff;
-            line-height: 1.35;
-        }
-
-        /* Painel de Telemetria Direito */
+        /* Telemetria Direita */
         .telemetry-panel {
             width: 310px;
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             overflow-y: auto;
         }
 
@@ -221,17 +204,17 @@
             background: rgba(2, 12, 38, 0.7);
             border: 1px solid rgba(0, 240, 255, 0.3);
             border-radius: 4px;
-            padding: 6px 8px;
+            padding: 8px 10px;
         }
 
         .metric-title {
-            font-size: 0.62rem;
+            font-size: 0.65rem;
             color: var(--border-color);
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .metric-value {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: bold;
             color: #fff;
         }
@@ -239,130 +222,90 @@
         .status-ok { color: var(--accent-green); }
         .status-alert { color: var(--accent-red); }
         .status-warn { color: var(--accent-amber); }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>CENTRO DE COMANDO UNIFICADO: PINN & DEFESA TÁTICA (v5.0)</h1>
+        <h1>CONTROLE DE CAMADA LIMITE POR MAGNETOHIDRODINÂMICA (MHD)</h1>
         <div class="badges">
-            <div class="badge">SMTA CONE 600x350mm</div>
-            <div class="badge">CAMPIS v4.2.6</div>
-            <div class="badge badge-danger">SIGILO DE DEFESA NACIONAL</div>
+            <div class="badge">CAMPO HTS 3.5 T</div>
+            <div class="badge badge-danger">HIPERSÔNICO MACH 8</div>
         </div>
     </header>
 
     <div class="main-container">
-        <!-- 1. Painel de Controle Esquerdo -->
+        <!-- 1. Controles Esquerdo -->
         <div class="control-panel">
             <div class="panel-section">
-                <h3>1. MOTOR NEURAL PINN (EQUAÇÃO DO CALOR)</h3>
+                <h3>SUBSISTEMAS MHD & IONIZAÇÃO</h3>
                 <div class="btn-group">
-                    <button class="action-pinn" onclick="trainPINNStep()">Treinar Épocas PINN (PyTorch Engine)</button>
-                    <button onclick="togglePINNMode()">Alternar Visualização Térmica PDE</button>
+                    <button id="btn-mhd" class="action-active" onclick="toggleMHDSystem()">Ativar Bobinas HTS & Ionização (MHD)</button>
+                    <button onclick="injectSeedGas()">Injetar Gás Semente (Potássio/Césio)</button>
+                    <button onclick="triggerPWMPulse()">Disparar Pulso PWM (18 MW / 20 kHz)</button>
                 </div>
             </div>
 
             <div class="panel-section">
-                <h3>2. TESTE HIPERSÔNICO (SMTA - ARC JET)</h3>
+                <h3>AJUSTE ELETROMECÂNICO (GIMBAL)</h3>
                 <div class="btn-group">
-                    <button class="action-danger" onclick="startArcJetTest()">Acionar Plasma Mach 8 (2.100°C)</button>
-                    <button onclick="runXRayScan()">Varredura Preventiva Raio-X</button>
+                    <button onclick="adjustGimbalAngle()">Ajustar Ângulo Servo-Atuador (SMA)</button>
+                    <button onclick="resetSimulation()">Resetar Sistema</button>
                 </div>
             </div>
 
             <div class="panel-section">
-                <h3>3. EFEITO DE MEMÓRIA DE FORMA (NITINOL)</h3>
-                <div class="btn-group">
-                    <button onclick="triggerNitinolImpact()">Simular Impacto Mola (Martensita)</button>
-                    <button style="color: #fed7aa;" onclick="startJouleHeating()">Injetar Corrente Joule (500°C)</button>
-                </div>
-            </div>
-
-            <div class="panel-section">
-                <h3>4. KROPYVA-LINK & BIOSSEGURANÇA MESH</h3>
-                <div class="btn-group">
-                    <button onclick="toggleEWJamming()">Ativar Interferência GPS (EW)</button>
-                    <button onclick="fireCounterBattery()">Disparar Fogo Sensor-to-Shooter</button>
-                    <button onclick="toggleBiosafetyCrisis()">Simular Surto Bioaerossol (CHONPS)</button>
-                </div>
-            </div>
-
-            <div class="panel-section">
-                <h3>5. SISTEMA CAMPIS (MASSAS HÍBRIDAS)</h3>
-                <div class="btn-group">
-                    <button class="action-danger" onclick="triggerCampisImpact()">Simular Impacto Hiperveloz (Nave 1/2)</button>
-                    <button onclick="resetAllSystems()">Resetar Subsistemas</button>
+                <h3>PARÂMETROS ELÉTRICOS</h3>
+                <div style="font-size: 0.68rem; line-height: 1.4; color: #94a3b8;">
+                    • Campo Magnético ($B$): 3.5 Tesla<br>
+                    • Tensão Eletrodos ($V$): 15 kV<br>
+                    • Corrente de Pulso ($I$): 1.2 kA<br>
+                    • Potência de Pico ($P$): 18 MW<br>
+                    • Frequência PWM: 20 kHz<br>
+                    • Criogenia HTS: 77 Kelvin (-196 °C)
                 </div>
             </div>
         </div>
 
-        <!-- 2. Centro: Canvas de Renderização & Logs PINN -->
+        <!-- 2. Centro: Visão Geral + Canvas -->
         <div class="center-container">
+            <div class="app-overview">
+                <strong>VISÃO GERAL DO APLICATIVO:</strong> Este aplicativo simula a mitigação de atrito e calor em veículos hipersônicos usando <strong>Magnetohidrodinâmica (MHD)</strong>. O ar ionizado (plasma) gerado pelo atrito a Mach 8 é defletido e desacelerado por campos magnéticos supercondutores (3.5 Tesla), gerando uma força de Lorentz que empurra a onda de choque para longe da estrutura física da ogiva, mantendo a temperatura nominal e arrasto zero.
+            </div>
+
             <div class="viewport-container">
                 <div class="viewport-header">
-                    <span id="view-status">VISUALIZAÇÃO TÁTICA MULTICAMADA & MAPA TÉRMICO PINN</span>
-                    <span id="canvas-fps">120 FPS [FPGA XILINX ACTIVE]</span>
+                    <span id="view-status">SIMULAÇÃO DE FLUXO HIPERSÔNICO [MHD ATIVO - FORÇA DE LORENTZ]</span>
+                    <span id="canvas-fps">CANVAS 2D | 120 FPS</span>
                 </div>
                 <canvas id="simCanvas"></canvas>
             </div>
-
-            <div class="log-panel">
-                <div class="log-title">[ LOG DE EXECUÇÃO DA PINN (ThermalPINN) & TELEMETRIA DO SISTEMA ]</div>
-                <div class="log-content" id="unified-log-text">
-                    [00:00:01] ThermalPINN inicializado (Arquitetura MLP 2x40x40x40x1).<br>
-                    [00:00:02] Restrição física acoplada: dT/dt - alpha * d²T/dx² = 0 (alpha = 0.000023 m²/s C/SiC).<br>
-                    [00:00:03] Sistema SMTA, C.A.M.P.I.S., Kropyva-Link e Biossegurança em operação síncrona.
-                </div>
-            </div>
         </div>
 
-        <!-- 3. Painel de Telemetria Direito -->
+        <!-- 3. Telemetria Direita -->
         <div class="telemetry-panel">
             <div class="panel-section">
-                <h3>ESTATÍSTICAS DA PINN</h3>
+                <h3>TELEMETRIA EM TEMPO REAL</h3>
             </div>
             <div class="metric-box">
-                <div class="metric-title">ÉPOCAS DE TREINAMENTO</div>
-                <div class="metric-value status-ok" id="pinn-epochs">0 Épocas</div>
+                <div class="metric-title">ESTADO DO SISTEMA MHD</div>
+                <div class="metric-value status-ok" id="stat-mhd">ATIVO (3.5 TESLA)</div>
             </div>
             <div class="metric-box">
-                <div class="metric-title">PERDA TOTAL (LOSS DATA + PHYSICS)</div>
-                <div class="metric-value status-ok" id="pinn-loss">0.000142</div>
+                <div class="metric-title">FORÇA DE LORENTZ ($\vec{F}$)</div>
+                <div class="metric-value status-ok" id="stat-lorentz">4.8 kN (Contrapressão)</div>
             </div>
             <div class="metric-box">
-                <div class="metric-title">RESIDUAL DA EQUAÇÃO DO CALOR (PDE)</div>
-                <div class="metric-value status-ok" id="pinn-pde">0.000018</div>
-            </div>
-
-            <div class="panel-section" style="margin-top: 5px;">
-                <h3>TELEMETRIA FÍSICA & TÁTICA</h3>
+                <div class="metric-title">TEMPERATURA DA OGIVA</div>
+                <div class="metric-value status-ok" id="stat-temp">320.4 °C (Controlada)</div>
             </div>
             <div class="metric-box">
-                <div class="metric-title">NARIZ SMTA (TERMOCOPAR S)</div>
-                <div class="metric-value status-ok" id="stat-smta-temp">24.5 °C</div>
+                <div class="metric-title">DENSIDADE DE ÍONS (LANGMUIR)</div>
+                <div class="metric-value status-ok" id="stat-ions">2.4e19 m⁻³ (Semente Ativa)</div>
             </div>
             <div class="metric-box">
-                <div class="metric-title">MOLA NITINOL (COMPRESSÃO / FASE)</div>
-                <div class="metric-value" id="stat-nitinol">12% [AUSTENITA]</div>
-            </div>
-            <div class="metric-box">
-                <div class="metric-title">FLUXO MAGNÉTICO CAMPIS (ÍMÃS)</div>
-                <div class="metric-value status-ok" id="stat-campis-mag">1.4 Tesla (Estável)</div>
-            </div>
-            <div class="metric-box">
-                <div class="metric-title">LINK KROPYVA / STARLINK</div>
-                <div class="metric-value status-ok" id="stat-kropyva">0.38 ms [ZERO-LATENCY]</div>
-            </div>
-            <div class="metric-box">
-                <div class="metric-title">EXCLUSÕES CHONPS (BIOSSEGURANÇA)</div>
-                <div class="metric-value status-ok" id="stat-chonps">0 inértes excluídos</div>
+                <div class="metric-title">CONSUMO DE POTÊNCIA MÉDIA</div>
+                <div class="metric-value status-ok" id="stat-power">150 kW (Pulsado)</div>
             </div>
         </div>
     </div>
@@ -371,28 +314,10 @@
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Estado Unificado do Sistema
-        let pinnEpochs = 0;
-        let pinnLoss = 0.00124;
-        let pinnPDE = 0.00015;
-        let showPINNHeatmap = false;
-
-        let smtaActive = false;
-        let smtaTemp = 24.5;
-        
-        let nitinolState = 'NORMAL'; // NORMAL, CRUSHED, HEATING, RESTORING
-        let nitinolTemp = 25.0;
-        let nitinolCrush = 0;
-
-        let campisActive = false;
-        let campisVibe = 0.02;
-        let campisOffset = 0;
-
-        let ewActive = false;
-        let bioCrisis = false;
-        let chonpsCount = 0;
-
-        let particles = [];
+        let mhdActive = true;
+        let seedGasActive = false;
+        let gimbalAngle = 0;
+        let plasmaParticles = [];
 
         function resizeCanvas() {
             canvas.width = canvas.parentElement.clientWidth;
@@ -401,138 +326,57 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        function logUnified(msg) {
-            let logDiv = document.getElementById('unified-log-text');
-            let timeStr = new Date().toTimeString().split(' ')[0];
-            logDiv.innerHTML += `<br>[${timeStr}] ${msg}`;
-            logDiv.scrollTop = logDiv.scrollHeight;
-        }
-
-        // Simulação da PINN (Physics-Informed Neural Network em JS espelhando o código Python)
-        function trainPINNStep() {
-            pinnEpochs += 50;
-            pinnLoss = Math.max(0.00001, pinnLoss * 0.92);
-            pinnPDE = Math.max(0.000001, pinnPDE * 0.89);
-
-            document.getElementById('pinn-epochs').innerText = `${pinnEpochs} Épocas`;
-            document.getElementById('pinn-loss').innerText = pinnLoss.toFixed(6);
-            document.getElementById('pinn-pde').innerText = pinnPDE.toFixed(6);
-
-            logUnified(`🧠 ThermalPINN iterada por +50 épocas. Loss Data: ${(pinnLoss*0.8).toFixed(6)} | Loss Physics (PDE residual): ${pinnPDE.toFixed(6)}.`);
-        }
-
-        function togglePINNMode() {
-            showPINNHeatmap = !showPINNHeatmap;
-            logUnified(`📊 Modo de visualização térmica PINN alterado para: ${showPINNHeatmap ? 'Gradiente PDE Ativo' : 'Estrutura Padrão'}`);
-        }
-
-        // Funções de Acionamento dos Cenários
-        function startArcJetTest() {
-            smtaActive = true;
-            smtaTemp = 2120.0;
-            document.getElementById('stat-smta-temp').innerText = '2120.0 °C';
-            document.getElementById('stat-smta-tempclassName = metric-value status-alert';
-            document.getElementById('stat-smta-temp').className = 'metric-value status-alert';
-            logUnified("🔥 Teste Arc Jet Plasma Mach 8 acionado no Cone SMTA. Nariz a 2.120°C (Isolamento Aerogel mantendo núcleo interno nominal).");
-        }
-
-        function runXRayScan() {
-            logUnified("🔍 Varredura preventiva por difração de Raio-X concluída. 0 micro-fissuras no Nitinol e na casca C/SiC.");
-        }
-
-        function triggerNitinolImpact() {
-            nitinolState = 'CRUSHED';
-            nitinolCrush = 1;
-            document.getElementById('stat-nitinol').innerText = '68% [MARTENSITA DEFORMADA]';
-            document.getElementById('stat-nitinol').className = 'metric-value status-alert';
-            logUnified("💥 Impacto hiperveloz detectado na mola de Nitinol. Deformação plástica na fase Martensita fria.");
-        }
-
-        function startJouleHeating() {
-            if(nitinolState === 'CRUSHED') {
-                nitinolState = 'HEATING';
-                nitinolTemp = 500.0;
-                document.getElementById('stat-nitinol').innerText = '500°C [AUSTENITA - EF. JOULE]';
-                document.getElementById('stat-nitinol').className = 'metric-value status-warn';
-                logUnified("⚡ IA fechou circuito elétrico (Efeito Joule). Nitinol aquecido a 500°C para transição de fase Austenita.");
-                
-                setTimeout(() => {
-                    nitinolState = 'NORMAL';
-                    nitinolCrush = 0;
-                    nitinolTemp = 25.0;
-                    document.getElementById('stat-nitinol').innerText = '12% [AUSTENITA - ORIGINAL]';
-                    document.getElementById('stat-nitinol').className = 'metric-value status-ok';
-                    logUnified("✨ Memória de forma acionada: Mola desamassada perfeitamente sozinha e resfriada.");
-                }, 3000);
+        function toggleMHDSystem() {
+            mhdActive = !mhdActive;
+            let btn = document.getElementById('btn-mhd');
+            if (mhdActive) {
+                btn.classList.add('action-active');
+                btn.innerText = 'Ativar Bobinas HTS & Ionização (MHD)';
+                document.getElementById('stat-mhd').innerText = 'ATIVO (3.5 TESLA)';
+                document.getElementById('stat-mhd').className = 'metric-value status-ok';
+                document.getElementById('stat-temp').innerText = '320.4 °C (Controlada)';
+                document.getElementById('stat-temp').className = 'metric-value status-ok';
+                document.getElementById('stat-lorentz').innerText = '4.8 kN (Contrapressão)';
             } else {
-                logUnified("ℹ️ Mola de Nitinol já está em operação normal.");
+                btn.classList.remove('action-active');
+                btn.innerText = 'Ativar Sistema MHD';
+                document.getElementById('stat-mhd').innerText = 'DESLIGADO [ALERTA TÉRMICO]';
+                document.getElementById('stat-mhd').className = 'metric-value status-alert';
+                document.getElementById('stat-temp').innerText = '2850.0 °C [FUSÃO IMINENTE]';
+                document.getElementById('stat-temp').className = 'metric-value status-alert';
+                document.getElementById('stat-lorentz').innerText = '0.0 kN (Sem Deflexão)';
             }
         }
 
-        function toggleEWJamming() {
-            ewActive = !ewActive;
-            logUnified(`⚠️ Interferência EW (Spoofing GPS) ${ewActive ? 'ATIVADA' : 'DESLIGADA'}. Navegação Óptica assumiu o controle.`);
-            document.getElementById('stat-kropyva').innerText = ewActive ? '0.42 ms [ÓPTICO ANTI-EW]' : '0.38 ms [ZERO-LATENCY]';
+        function injectSeedGas() {
+            seedGasActive = true;
+            document.getElementById('stat-ions').innerText = '8.6e20 m⁻³ (Potássio/Césio)';
+            setTimeout(() => { seedGasActive = false; }, 4000);
         }
 
-        function fireCounterBattery() {
-            logUnified("🎯 Fogo de contrabateria disparado instantaneamente via overlay do Kropyva-Link.");
-        }
-
-        function toggleBiosafetyCrisis() {
-            bioCrisis = !bioCrisis;
-            if(bioCrisis) {
-                chonpsCount += 142;
-                document.getElementById('stat-chonps').innerText = `${chonpsCount} inértes filtrados`;
-                logUnified("🦠 Surto de bioaerossol injetado. Núcleo CHONPS excluiu instantaneamente materiais inértes.");
-            } else {
-                logUnified("🟢 Matriz de Biossegurança estabilizada.");
-            }
-        }
-
-        function triggerCampisImpact() {
-            campisActive = true;
-            campisOffset = -50;
-            campisVibe = 1.85;
-            document.getElementById('stat-campis-mag').innerText = '2.8 Tesla (Damping Ativo)';
-            document.getElementById('stat-campis-mag').className = 'metric-value status-alert';
-            logUnified("💥 C.A.M.P.I.S.: Impacto absorvido pelo escudo de sacrifício (Nave 2) via campo magnético e molas.");
-
+        function triggerPWMPulse() {
+            document.getElementById('stat-power').innerText = '18 MW (Pico 20 kHz)';
             setTimeout(() => {
-                campisActive = false;
-                campisOffset = 0;
-                campisVibe = 0.02;
-                document.getElementById('stat-campis-mag').innerText = '1.4 Tesla (Estável)';
-                document.getElementById('stat-campis-mag').className = 'metric-value status-ok';
-                logUnified("🛡️ C.A.M.P.I.S.: Sistema estabilizado com sucesso. Zero deformação permanente.");
-            }, 3500);
+                document.getElementById('stat-power').innerText = '150 kW (Pulsado)';
+            }, 1500);
         }
 
-        function resetAllSystems() {
-            smtaActive = false;
-            smtaTemp = 24.5;
-            nitinolState = 'NORMAL';
-            nitinolTemp = 25.0;
-            nitinolCrush = 0;
-            campisActive = false;
-            campisOffset = 0;
-            campisVibe = 0.02;
-            ewActive = false;
-            bioCrisis = false;
-            document.getElementById('stat-smta-temp').innerText = '24.5 °C';
-            document.getElementById('stat-smta-temp').className = 'metric-value status-ok';
-            document.getElementById('stat-nitinol').innerText = '12% [AUSTENITA]';
-            document.getElementById('stat-nitinol').className = 'metric-value status-ok';
-            document.getElementById('stat-campis-mag').innerText = '1.4 Tesla (Estável)';
-            document.getElementById('stat-campis-mag').className = 'metric-value status-ok';
-            logUnified("🔄 Todos os subsistemas unificados foram reinicializados.");
+        function adjustGimbalAngle() {
+            gimbalAngle = (gimbalAngle + 2.5) % 10;
         }
 
-        // Loop de Renderização Canvas 2D Unificado
+        function resetSimulation() {
+            mhdActive = true;
+            seedGasActive = false;
+            gimbalAngle = 0;
+            plasmaParticles = [];
+        }
+
+        // Loop de Renderização Canvas 2D
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Grid cibernético de fundo
+            // Grid de fundo tático
             ctx.strokeStyle = 'rgba(0, 240, 255, 0.04)';
             ctx.lineWidth = 1;
             let gridSize = 40;
@@ -543,75 +387,86 @@
                 ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
             }
 
-            let cx = canvas.width / 2;
+            let cx = 150;
             let cy = canvas.height / 2;
 
-            // --- 1. Renderizar Cone SMTA (Esquerda) ---
-            ctx.save();
-            ctx.translate(cx - 220, cy);
+            // Gerar partículas de fluxo de ar hipersônico da esquerda para a direita
+            if (Math.random() < 0.8) {
+                plasmaParticles.push({
+                    x: 10,
+                    y: cy + (Math.random() - 0.5) * 260,
+                    vx: 16 + Math.random() * 4,
+                    vy: 0,
+                    deflected: false
+                });
+            }
 
-            // Casca Externa C/SiC
-            ctx.fillStyle = smtaActive ? '#ef4444' : '#1e293b';
-            ctx.strokeStyle = '#00f0ff';
-            ctx.lineWidth = 2;
+            // Atualizar e renderizar partículas
+            for (let i = plasmaParticles.length - 1; i >= 0; i--) {
+                let p = plasmaParticles[i];
+                p.x += p.vx;
+
+                // Interação com o campo magnético / ogiva (MHD)
+                let distToTip = Math.sqrt((p.x - cx) ** 2 + (p.y - cy) ** 2);
+                if (mhdActive && distToTip < 160 && !p.deflected) {
+                    p.deflected = true;
+                    // Força de Lorentz desvia a partícula para cima ou para baixo
+                    p.vy = (p.y < cy ? -6 : 6) * (seedGasActive ? 1.5 : 1.0);
+                    p.vx *= 0.6; // Desaceleração MHD
+                }
+
+                if (p.deflected) {
+                    p.y += p.vy;
+                }
+
+                ctx.fillStyle = (mhdActive && p.deflected) ? '#38bdf8' : '#ff3333';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+                    plasmaParticles.splice(i, 1);
+                }
+            }
+
+            // Desenhar Ogiva Hipersônica (Cone)
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(gimbalAngle * Math.PI / 180);
+
+            ctx.fillStyle = mhdActive ? '#0f172a' : '#7f1d1d';
+            ctx.strokeStyle = mhdActive ? '#00f0ff' : '#ff3333';
+            ctx.lineWidth = 2.5;
+
             ctx.beginPath();
             ctx.moveTo(0, 0);
-            ctx.quadraticCurveTo(50, -25, 180, -70);
-            ctx.lineTo(180, 70);
-            ctx.quadraticCurveTo(50, 25, 0, 0);
+            ctx.lineTo(160, -75);
+            ctx.lineTo(160, 75);
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
 
-            // Se gradiente PINN ativo, pintar calor PDE
-            if (showPINNHeatmap) {
-                let grad = ctx.createLinearGradient(0, 0, 180, 0);
-                grad.addColorStop(0, 'rgba(255, 51, 51, 0.7)');
-                grad.addColorStop(0.5, 'rgba(245, 158, 11, 0.5)');
-                grad.addColorStop(1, 'rgba(0, 255, 102, 0.2)');
-                ctx.fillStyle = grad;
-                ctx.fill();
-            }
+            // Bobinas HTS & Eletrodos visuais no nariz
+            ctx.fillStyle = '#00ff66';
+            ctx.beginPath();
+            ctx.arc(15, 0, 5, 0, Math.PI * 2);
+            ctx.fill();
 
             ctx.fillStyle = '#fff';
             ctx.font = '10px Courier New';
-            ctx.fillText('SMTA CONE (600x350mm)', 10, -85);
+            ctx.fillText('ELETRODOS & BOBINAS HTS (3.5T)', -20, -90);
 
-            ctx.restore();
-
-            // --- 2. Renderizar Sistema C.A.M.P.I.S. (Direita) ---
-            ctx.save();
-            campisOffset += (0 - campisOffset) * 0.08;
-            let cX = cx + 120;
-            let cY = cy;
-
-            // Nave 1
-            ctx.fillStyle = '#0f172a';
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 2;
-            ctx.fillRect(cX - 80, cY - 45, 100, 90);
-            ctx.strokeRect(cX - 80, cY - 45, 100, 90);
-
-            // Nave 2 (Escudo com offset de impacto)
-            let n2X = cX + 60 + campisOffset;
-            ctx.fillStyle = campisActive ? 'rgba(255,51,51,0.3)' : '#1e293b';
-            ctx.strokeStyle = campisActive ? '#ff3333' : '#f59e0b';
-            ctx.fillRect(n2X, cY - 55, 50, 110);
-            ctx.strokeRect(n2X, cY - 55, 50, 110);
-
-            // Molas de Nitinol conectando Nave 1 e Nave 2
-            ctx.strokeStyle = nitinolState === 'HEATING' ? '#f59e0b' : '#00ff66';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(cX + 20, cY - 20);
-            ctx.lineTo(n2X, cY - 20);
-            ctx.moveTo(cX + 20, cY + 20);
-            ctx.lineTo(n2X, cY + 20);
-            ctx.stroke();
-
-            ctx.fillStyle = '#c0d8ef';
-            ctx.font = '9px Courier New';
-            ctx.fillText('C.A.M.P.I.S. [MASSAS]', cX - 70, cY - 60);
+            // Linhas de Campo Magnético se MHD Ativo
+            if (mhdActive) {
+                ctx.strokeStyle = 'rgba(0, 240, 255, 0.35)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(20, 0, 110, -Math.PI / 2, Math.PI / 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(20, 0, 150, -Math.PI / 2, Math.PI / 2);
+                ctx.stroke();
+            }
 
             ctx.restore();
 
